@@ -1,11 +1,17 @@
 import merge from "deepmerge"
 import Store from "electron-store"
+// const Store = require('electron-store')
 
 const STORAGE_NAME = "vuex"
 const STORAGE_KEY = "state"
 const STORAGE_TEST_KEY = "test"
 
 class PersistedState {
+  options: any
+  store: any
+  whitelist: any
+  blacklist: any
+
   constructor(options, store) {
     this.options = options
     this.store = store
@@ -20,7 +26,7 @@ class PersistedState {
   }
 
   createStorage() {
-    return new Store({ name: this.options.storageName || STORAGE_NAME })
+    return new Store({ name: this.options.storageName || STORAGE_NAME } as any)
   }
 
   getState() {
@@ -80,7 +86,7 @@ class PersistedState {
   }
 
   loadInitialState() {
-    const state = this.getState(this.options.storage, this.options.storageKey)
+    const state = this.getState()
 
     if (state) {
       const mergedState = merge(this.store.state, state, { arrayMerge: this.combineMerge })

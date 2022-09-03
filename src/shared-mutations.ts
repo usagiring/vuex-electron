@@ -1,17 +1,21 @@
-import { ipcMain, ipcRenderer } from "electron"
+// import { ipcMain, ipcRenderer } from "electron"
+const { ipcMain, ipcRenderer } = require('electron')
 
 const IPC_EVENT_CONNECT = "vuex-mutations-connect"
 const IPC_EVENT_NOTIFY_MAIN = "vuex-mutations-notify-main"
 const IPC_EVENT_NOTIFY_RENDERERS = "vuex-mutations-notify-renderers"
 
 class SharedMutations {
+  options: any
+  store: any
+
   constructor(options, store) {
     this.options = options
     this.store = store
   }
 
   loadOptions() {
-    if (!this.options.type) this.options.type = process.type === "renderer" ? "renderer" : "main"
+    if (!this.options.type) this.options.type = (process as any).type === "renderer" ? "renderer" : "main"
     if (!this.options.ipcMain) this.options.ipcMain = ipcMain
     if (!this.options.ipcRenderer) this.options.ipcRenderer = ipcRenderer
   }
@@ -44,7 +48,7 @@ class SharedMutations {
 
   rendererProcessLogic() {
     // Connect renderer to main process
-    this.connect()
+    this.connect(null)
 
     // Save original Vuex methods
     this.store.originalCommit = this.store.commit
